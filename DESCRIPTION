@@ -1,11 +1,12 @@
 Package: mas
 Type: Package
 Title: Membership Association Studies
-Version: 0.221103
-Date: 2022-11-03
-Author: Alencar Xavier, Shizhong Xu
+Version: 0.1
+Date: 2022-11-04
+Authors@R: c(person("Alencar", "Xavier", role=c("aut", "cre"), email = "alenxav@gmail.com"),person("Shizhong", "Xu", role=c("aut", "ctb")))
+Author: Alencar Xavier [aut, cre], Shizhong Xu [aut]
 Maintainer: Alencar Xavier <alenxav@gmail.com>
-Description: Tool for genome-wide association analysis with membership, variance adjustment, and multivariate settings.
+Description: Genome-wide association analysis that accomodate membership information, variance adjustment, and correlated responses.
 License: GPL-3
 Imports: Rcpp, truncdist
 LinkingTo: Rcpp, RcppEigen

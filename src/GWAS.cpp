@@ -6,7 +6,7 @@
 
 // [[Rcpp::export]]
 SEXP GWAS(Eigen::MatrixXd Y, Eigen::MatrixXd GEN, Eigen::MatrixXd M,
-              int maxit = 500,double logtol=-8, int cores = 1){
+              int maxit = 500,double logtol=-8, int cores = 1, bool verb = true){
   
   // 
   // Null model - Multivariate SNP-BLUP
@@ -29,7 +29,7 @@ SEXP GWAS(Eigen::MatrixXd Y, Eigen::MatrixXd GEN, Eigen::MatrixXd M,
   Eigen::VectorXd iN = n.array().inverse();
   
   // Centralize y
-  Rcpp::Rcout << "Running absobtion of phenotypes (SY)\n";
+  if(verb){ Rcpp::Rcout << "Running absobtion of phenotypes (SY)\n"; }
   Eigen::MatrixXd y(n0,k), WM(n0,f), MU(f,k), iMM(f,f);
   for(int i=0; i<k; i++){
     for(int j=0; j<f; j++){WM.col(j)=M.col(j).array()*Z.col(i).array();}
@@ -39,20 +39,20 @@ SEXP GWAS(Eigen::MatrixXd Y, Eigen::MatrixXd GEN, Eigen::MatrixXd M,
   }
   
   // Compute SX
-  Rcpp::Rcout << "Running absobtion of marker scores (SZ)\n";
+  if(verb){  Rcpp::Rcout << "Running absobtion of marker scores (SZ)\n"; }
   iMM = (M.transpose()*M).inverse();
   for(int j=0; j<m; j++){ GEN.col(j) = (GEN.col(j) - M*(iMM*M.transpose()*GEN.col(j))).array(); }
   
   // Single value decomposition
-  Rcpp::Rcout << "SVD of marker score matrix\n";
+  if(verb){ Rcpp::Rcout << "SVD of marker score matrix\n"; }
   Eigen::BDCSVD<Eigen::MatrixXd> svd(GEN, Eigen::ComputeThinU | Eigen::ComputeThinV );
   Eigen::MatrixXd V = svd.matrixV();
   Eigen::VectorXd D = svd.singularValues();
   Eigen::MatrixXd X = svd.matrixU() * D.array().matrix().asDiagonal();
   int p = X.cols();
   
-  Rcpp::Rcout << "Set starting values for coefficients and variances\n";
   // Sum of squares of X
+  if(verb){ Rcpp::Rcout << "Set starting values for coefficients and variances\n"; }
   Eigen::MatrixXd XX(p,k); 
   for(int i=0; i<p; i++){ XX.row(i) = X.col(i).array().square().matrix().transpose() * Z;}
   Eigen::VectorXd MSX = XX.colwise().sum().array(); MSX=MSX.array()*iN.array();
@@ -98,7 +98,7 @@ SEXP GWAS(Eigen::MatrixXd Y, Eigen::MatrixXd GEN, Eigen::MatrixXd M,
   int J;
   
   // Loop
-  Rcpp::Rcout << "Starting Gauss-Seidel loop\n";
+  if(verb){ Rcpp::Rcout << "Starting Gauss-Seidel loop\n"; }
   while(numit<maxit){
     
     // Store coefficients pre-iteration
@@ -163,29 +163,29 @@ SEXP GWAS(Eigen::MatrixXd Y, Eigen::MatrixXd GEN, Eigen::MatrixXd M,
     CNV1(numit) = cnv;
     CNV2(numit) = log10((h20.array()-h2.array()).square().sum());
     CNV3(numit) = log10((vb0.array()-vb.array()).square().sum());
-    if( std::isnan(cnv) ){Rcpp::Rcout << "Numerical issue!!\n"; break;}
+    if( std::isnan(cnv) && verb ){Rcpp::Rcout << "Numerical issue!!\n"; break;}
     
     // Print
     ++numit;
-    if( numit % 100 == 0){ Rcpp::Rcout << "Iter: "<< numit << " || log10 Conv: "<< cnv << "\n"; } 
-    if( numit > 10 && cnv<logtol ){ Rcpp::Rcout << "Model coverged in "<< numit << " iterations\n"; break; }
-    if( numit == maxit){ Rcpp::Rcout << "Model did not converge\n"; }
+    if( numit % 100 == 0 && verb){ Rcpp::Rcout << "Iter: "<< numit << " || log10 Conv: "<< cnv << "\n"; } 
+    if( numit > 10 && cnv<logtol && verb ){ Rcpp::Rcout << "Model coverged in "<< numit << " iterations\n"; break; }
+    if( numit == maxit && verb ){ Rcpp::Rcout << "Model did not converge\n"; }
   }
   
-  Rcpp::Rcout << "Fitting final model\n";
+  if(verb){ Rcpp::Rcout << "Fitting final model\n"; }
   // Fitting the model
   Eigen::MatrixXd hat = X*b;
   for(int i=0; i<k; i++){ hat.col(i) = ( M * MU.col(i) + hat.col(i)).array(); }
   Eigen::MatrixXd beta = V*b;
   
   // Correlations
-  Rcpp::Rcout << "Estimating correlations\n";
+  if(verb){ Rcpp::Rcout << "Estimating correlations\n"; }
   for(int i=0; i<k; i++){
     for(int j=0; j<k; j++){
       GC(i,j)=vb(i,j)/(sqrt(vb(i,i)*vb(j,j)));}}
   
   // Resize convergence vectors
-  Rcpp::Rcout << "Convergence statistics\n";
+  if(verb){  Rcpp::Rcout << "Convergence statistics\n"; }
   Eigen::VectorXd CNV1b(numit),CNV2b(numit),CNV3b(numit);
   for(int i=0; i<numit; i++){ CNV1b(i)=CNV1(i);CNV2b(i)=CNV2(i);CNV3b(i)=CNV3(i);}
   
@@ -205,7 +205,7 @@ SEXP GWAS(Eigen::MatrixXd Y, Eigen::MatrixXd GEN, Eigen::MatrixXd M,
   // 
   // Membership GWAS
   // 
-  Rcpp::Rcout << "Starting Membership GWAS\n";
+  if(verb){ Rcpp::Rcout << "Starting Membership GWAS\n"; }
   
   // Membership matrix and other things
   int df;
@@ -220,7 +220,7 @@ SEXP GWAS(Eigen::MatrixXd Y, Eigen::MatrixXd GEN, Eigen::MatrixXd M,
   for(int trait=0; trait<k; trait++){
     
     // Don't run if the base model broke
-    if( std::isnan(cnv) ){Rcpp::Rcout << "GWAS NOT RUN!!\n"; break;}
+    if( std::isnan(cnv) && verb ){Rcpp::Rcout << "GWAS CANNOT RUN!!\n"; break;}
     
     
     // degrees of freedom
@@ -231,11 +231,11 @@ SEXP GWAS(Eigen::MatrixXd Y, Eigen::MatrixXd GEN, Eigen::MatrixXd M,
     iC = 1.0 / ( D.array().square() + (ve(trait)/vb(trait,trait)) ).array();
     
     // Genome screening
-    Rcpp::Rcout << "Genome-wide screening (Trait "<< (trait+1) << ")\n";
+    if(verb){ Rcpp::Rcout << "Genome-wide screening (Trait "<< (trait+1) << ")\n"; }
     for(int J=0; J<m; J++){
       
       // Print marker  
-      if( J>0 && J % 1000 == 0){ Rcpp::Rcout << "Screening marker: "<< J << "\n"; } 
+      if( J>0 && J % 1000 == 0 && verb ){ Rcpp::Rcout << "Screening marker: "<< J << "\n"; } 
       
       // Create Shizhong's Z matrix
       for(int i=0; i<f; i++){
@@ -260,11 +260,20 @@ SEXP GWAS(Eigen::MatrixXd Y, Eigen::MatrixXd GEN, Eigen::MatrixXd M,
       
       // Store main var components
       MSEx(J,trait) = VarE;
-      if(tmp>0 && ((MSB-VarE)>0)){
-        QtlVar(J,trait) = f*(MSB-VarE)/df;
-        QtlHer(J,trait) = QtlVar(J,trait)/(QtlVar(J,trait)+VarE);
+      if(tmp>0){
         Wald(J,trait) = tmp/VarE;
-      }else{ QtlVar(J,trait)=0.0; QtlHer(J,trait)=0.0; Wald(J,trait)=0.0; }
+        if((MSB-VarE)>0){
+          QtlVar(J,trait) = f*(MSB-VarE)/df;
+          QtlHer(J,trait) = QtlVar(J,trait)/(QtlVar(J,trait)+VarE);
+        }else{
+          QtlVar(J,trait)=0.0;
+          QtlHer(J,trait)=0.0;
+        }
+      }else{
+        QtlVar(J,trait)=0.0;
+        QtlHer(J,trait)=0.0;
+        Wald(J,trait)=0.0;
+      }
       PopWald.row(J) = gamma.array().square() * ZPZ.diagonal().array()/VarE;}   
     
     // End GWAS loop
@@ -286,6 +295,7 @@ SEXP GWAS(Eigen::MatrixXd Y, Eigen::MatrixXd GEN, Eigen::MatrixXd M,
   return OutputList;
   
 }
+
 
 // [[Rcpp::export]]
 SEXP MLM(Eigen::MatrixXd Y, Eigen::MatrixXd X, Eigen::MatrixXd Z,
@@ -415,9 +425,9 @@ SEXP MLM(Eigen::MatrixXd Y, Eigen::MatrixXd X, Eigen::MatrixXd Z,
     ++numit;
     cnv = log10((beta0.array()-b.array()).square().sum());
     if( std::isnan(cnv) ){Rcpp::Rcout << "Numerical issue! Job aborted (it=" << numit << ")\n"; break;}
-    if( numit % 100 == 0){ Rcpp::Rcout << "Iter: "<< numit << " || log10 Conv: "<< cnv << "\n"; } 
+    if( numit % 100 == 0 ){ Rcpp::Rcout << "Iter: "<< numit << " || log10 Conv: "<< cnv << "\n"; } 
     if(  cnv<logtol ){ Rcpp::Rcout << "Model coverged in "<< numit << " iterations\n"; break; }
-    if( numit == maxit){ Rcpp::Rcout << "Model did not converge\n"; }
+    if( numit == maxit ){ Rcpp::Rcout << "Model did not converge\n"; }
     
   }
   

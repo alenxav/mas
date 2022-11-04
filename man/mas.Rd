@@ -26,14 +26,14 @@ Xavier, A. and Habier, D., 2022. A new approach fits multivariate genomic predic
 data( soy ) 
 
 # run gwas
-fit = GWAS(y, Z, pop) 
+fit1 = gwas(y, Z, pop) 
 # adjust variances
-fit2 = CorrectBeavis( fit ) 
+fit2 = CorrectBeavis( fit1 ) 
 
-# compare plots
-par(mfrow=c(1,2))
-plot( fit,  h2=TRUE ) # display QTL h2
-plot( fit2, h2=TRUE ) # display adjusted QTL h2
+# Compare before and after correction
+plot( fit1, h2=TRUE, col=8, pch=20) # display QTL h2
+plot( fit2, h2=TRUE, add=T, pch=20, type='o') # adjusted QTL h2
+legend('topleft',pch=16,col=c(8,1),c('Before correction','After Beavis correction'))
 
 
 }

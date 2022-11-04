@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // GWAS
-SEXP GWAS(Eigen::MatrixXd Y, Eigen::MatrixXd GEN, Eigen::MatrixXd M, int maxit, double logtol, int cores);
-RcppExport SEXP _mas_GWAS(SEXP YSEXP, SEXP GENSEXP, SEXP MSEXP, SEXP maxitSEXP, SEXP logtolSEXP, SEXP coresSEXP) {
+SEXP GWAS(Eigen::MatrixXd Y, Eigen::MatrixXd GEN, Eigen::MatrixXd M, int maxit, double logtol, int cores, bool verb);
+RcppExport SEXP _mas_GWAS(SEXP YSEXP, SEXP GENSEXP, SEXP MSEXP, SEXP maxitSEXP, SEXP logtolSEXP, SEXP coresSEXP, SEXP verbSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -23,7 +23,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type maxit(maxitSEXP);
     Rcpp::traits::input_parameter< double >::type logtol(logtolSEXP);
     Rcpp::traits::input_parameter< int >::type cores(coresSEXP);
-    rcpp_result_gen = Rcpp::wrap(GWAS(Y, GEN, M, maxit, logtol, cores));
+    Rcpp::traits::input_parameter< bool >::type verb(verbSEXP);
+    rcpp_result_gen = Rcpp::wrap(GWAS(Y, GEN, M, maxit, logtol, cores, verb));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -45,7 +46,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mas_GWAS", (DL_FUNC) &_mas_GWAS, 6},
+    {"_mas_GWAS", (DL_FUNC) &_mas_GWAS, 7},
     {"_mas_MLM", (DL_FUNC) &_mas_MLM, 6},
     {NULL, NULL, 0}
 };

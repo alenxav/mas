@@ -1,7 +1,6 @@
-#library(truncdist)
 
 CorrectBeavis = function(fit){
- 
+  
   # Check class
   if(!is(fit,"GenModel")) stop("Input object must be of class GenModel.")
   
@@ -59,37 +58,4 @@ CorrectBeavis = function(fit){
   # Output
   return(fit2)
   
-}
-
-plot.GenModel = function(x,h2=FALSE,...){
-  k = ncol(x$GWAS$Wald)
-  m = nrow(x$GWAS$Wald)
-  alpha = 0.05/m
-  q = ncol(x$GWAS$Membership)
-  tw = qchisq(1-alpha,df=q)
-  kk = ceiling(sqrt(k))
-  par(mfrow=c(kk,kk))
-  for(i in 1:k){
-    if(h2){
-      plot(x$GWAS$QTLh2[,i],ylab='QTL heritability',xlab='Marker',main=paste0('Trait',i),...)
-    }else{
-      plot(x$GWAS$Wald[,i],ylab='Wald',xlab='Marker',main=paste0('Trait',i),...)
-      abline(h=tw,lty=3)
-    }
-  }
-}
-
-print.GenModel = function(x, ...){
-  k = ncol(x$GWAS$Wald)
-  m = nrow(x$GWAS$Wald)
-  alpha = 0.05/m
-  q = ncol(x$GWAS$Membership)
-  n = round(mean(x$GWAS$N))
-  tw = qchisq(1-alpha,df=q)
-  cat('Association analysis run on',k,'trait(s),',m,'markers,',n,'individuals from',q,'populations\n')
-  h2 = paste(round(x$GBLUP$Heritability,2),collapse = ', ')
-  cat('Trait heritability:',h2,' \n')
-  as = paste(colSums(x$GWAS$Wald>tw),collapse = ', ')
-  cat('Number of significant associations:',as,' \n')
-  if("BeavisCorrection"%in%ls(x$GWAS)){cat('Variances were adjusted for the Beavis effect\n')} 
 }

@@ -1,5 +1,6 @@
 \name{gwas}
 \alias{GWAS}
+\alias{gwas}
 \alias{MLM}
 \alias{CorrectBeavis}
 \alias{print.GenModel}
@@ -15,8 +16,9 @@ Genome-wide association analysis that allows for integrating population membersh
 }
 
 \usage{
-GWAS(Y,GEN,M,maxit=500,logtol=-8,cores=1)
+GWAS(Y,GEN,M,maxit=500,logtol=-8,cores=1,verb=TRUE)
 CorrectBeavis(fit)
+gwas(y,GEN,m,...)
 }
 
 \arguments{
@@ -26,25 +28,32 @@ CorrectBeavis(fit)
   \item{maxit}{Integer. Maximum number of iterations.}
   \item{logtol}{Scalar. Convergerce parameter of null-model in log scale.}
   \item{cores}{Integer. Number of CPUs to use OpenMP.}
+  \item{verb}{Logical. Print verbosis? }
   \item{fit}{Object of class GenModel, output of the GWAS function.}
+  \item{y}{Numeric vector or matrix with phenotypic information.}
+  \item{m}{Factor, vector, or numeric matrix with membership information.}
+  \item{...}{Arguments to be passed to GWAS.}
 }
 
 \details{
 
+The function \code{gwas} is a wrapper for \code{GWAS} that accepts vectors as inputs, suitable for univariate analysis and discrete membership, such as family, ethnicity or population.
 
-The model for the genome-wide association model is set as follows:
+The linear model for the genome-wide association is set as follows:
 
 \deqn{ y = Xb + Zu + g + e }
 
 where \eqn{y} is the response variable, \eqn{Xb} corresponds to the fixed effect term set as the membership matrix, \eqn{Zu} corresponds to the marker-membership interaction term, \eqn{g} is the polygenic term defines by \eqn{g=Ma}, where \eqn{M} is the genotypic matrix and \eqn{g} are marker effects, and \eqn{e} is the residual term.
 
-The null-hypothesis term cosists of a similar model, but without \eqn{Zu}. 
-
-For populations without knwon membership, set \code{M=matrix(rep(1,nrow(Y)))}.
+The null-hypothesis term cosists of a similar model, but without \eqn{Zu}. The significance threshold is based on the Bonferroni correction.
 
 Theorical description of the model is provided by Wei and Xu (2016). Variance components are REML estimates under the univariate case. In the multivariate case, variance and covariance components are obtained through a general-purpose REML approximation (Van Raden and Jung 1987), which yields the exact same solution as REML when all traits are observed in all individuals. The multivariate generalization is described by Xavier and Habier (2022).
 
 The package provides the function \code{MLM(Y,X,Z)} for users only interested in solving multivariate mixed models, which takes as input the phenotypic matrix (\code{Y}), design matrices of fixed effects (\code{X}) and random effect (\code{Z}), and the same controls (\code{logtol,cores}) as the function \code{GWAS}. Unlike the GWAS solved, this function uses an efficient solver without single-value decomposition, as described by Xavier and Habier (2022).
+
+In the \code{GWAS} function, set \code{M=matrix(rep(1,nrow(Y)))} when membership is not knwon.
+
+The output of functions \code{gwas/GWAS} is of class "GenModel", which has two custom functions: \code{plot} and \code{print}. The function \code{plot.GenModel} has a few arguments that allow users to choose the trait (\code{trait=1}), to overlay plots (\code{add=FALSE}), and to plot the QTL heritability instead of the association statistic (\code{h2=FALSE}).
 
 }
 
@@ -71,13 +80,13 @@ Xavier, A. and Habier, D., 2022. A new approach fits multivariate genomic predic
 data( soy ) 
 
 # run gwas
-fit = GWAS(y, Z, pop) 
+fit1 = gwas(y, Z, pop) 
 # adjust variances
-fit2 = CorrectBeavis( fit ) 
+fit2 = CorrectBeavis( fit1 ) 
 
 # Compare before and after correction
-plot( fit,  h2=TRUE, pch=20, col=8 ) # display QTL h2
-lines( fit2$GWAS$QTLh2, pch=20, type='o' ) # adjusted QTL h2
-legend('topright',pch=16,col=c(8,1),c('Before Beavis correction','After Beavis correction'))
+plot( fit1, h2=TRUE, col=8, pch=20) # display QTL h2
+plot( fit2, h2=TRUE, add=T, pch=20, type='o') # adjusted QTL h2
+legend('topleft',pch=16,col=c(8,1),c('Before correction','After Beavis correction'))
 
 }
