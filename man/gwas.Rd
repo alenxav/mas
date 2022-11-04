@@ -17,7 +17,7 @@ Genome-wide association analysis that allows for integrating population membersh
 
 \usage{
 GWAS(Y,GEN,M,maxit=500,logtol=-8,cores=1,verb=TRUE)
-CorrectBeavis(fit)
+CorrectBeavis(fit,verb=TRUE)
 gwas(y,GEN,m,...)
 }
 
@@ -28,7 +28,7 @@ gwas(y,GEN,m,...)
   \item{maxit}{Integer. Maximum number of iterations.}
   \item{logtol}{Scalar. Convergerce parameter of null-model in log scale.}
   \item{cores}{Integer. Number of CPUs to use OpenMP.}
-  \item{verb}{Logical. Print verbosis? }
+  \item{verb}{Logical. Print process status? (verbose) }
   \item{fit}{Object of class GenModel, output of the GWAS function.}
   \item{y}{Numeric vector or matrix with phenotypic information.}
   \item{m}{Factor, vector, or numeric matrix with membership information.}
@@ -37,15 +37,13 @@ gwas(y,GEN,m,...)
 
 \details{
 
-The function \code{gwas} is a wrapper for \code{GWAS} that accepts vectors as inputs, suitable for univariate analysis and discrete membership, such as family, ethnicity or population.
+The function \code{gwas} is a wrapper for \code{GWAS} that accepts vectors as inputs, suitable for single-trait analysis and discrete membership, such as family, ethnicity or population.
 
 The linear model for the genome-wide association is set as follows:
 
 \deqn{ y = Xb + Zu + g + e }
 
-where \eqn{y} is the response variable, \eqn{Xb} corresponds to the fixed effect term set as the membership matrix, \eqn{Zu} corresponds to the marker-membership interaction term, \eqn{g} is the polygenic term defines by \eqn{g=Ma}, where \eqn{M} is the genotypic matrix and \eqn{g} are marker effects, and \eqn{e} is the residual term.
-
-The null-hypothesis term cosists of a similar model, but without \eqn{Zu}. The significance threshold is based on the Bonferroni correction.
+where \eqn{y} is the response variable, \eqn{Xb} corresponds to the fixed effect term set as the membership matrix, \eqn{Zu} corresponds to the marker-membership interaction term, \eqn{g} is the polygenic term defines by \eqn{g=Ma}, where \eqn{M} is the genotypic matrix and \eqn{g} are marker effects, and \eqn{e} is the residual term. The null-hypothesis term cosists of a similar model, but without \eqn{Zu}. The significance threshold is based on the Bonferroni correction.
 
 Theorical description of the model is provided by Wei and Xu (2016). Variance components are REML estimates under the univariate case. In the multivariate case, variance and covariance components are obtained through a general-purpose REML approximation (Van Raden and Jung 1987), which yields the exact same solution as REML when all traits are observed in all individuals. The multivariate generalization is described by Xavier and Habier (2022).
 
@@ -86,7 +84,7 @@ fit2 = CorrectBeavis( fit1 )
 
 # Compare before and after correction
 plot( fit1, h2=TRUE, col=8, pch=20) # display QTL h2
-plot( fit2, h2=TRUE, add=T, pch=20, type='o') # adjusted QTL h2
+plot( fit2, h2=TRUE, add=TRUE, pch=20, type='o') # adjusted QTL h2
 legend('topleft',pch=16,col=c(8,1),c('Before correction','After Beavis correction'))
 
 }
