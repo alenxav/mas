@@ -4,7 +4,7 @@ Title: Membership Association Studies
 Version: 0.2
 Date: 2023-09-03
 Authors@R: c(person("Alencar", "Xavier", role=c("aut", "cre"), email = "alenxav@gmail.com"),person("Shizhong", "Xu", role=c("aut", "ctb")))
-Author: Alencar Xavier [aut, cre], Shizhong Xu [aut]
+Author: Alencar Xavier [aut, cre], Shizhong Xu [aut, ctb]
 Maintainer: Alencar Xavier <alenxav@gmail.com>
 Description: Genome-wide association analysis that accomodate membership information, variance adjustment, and correlated responses.
 License: GPL-3

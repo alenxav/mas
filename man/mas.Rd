@@ -32,7 +32,7 @@ fit2 = CorrectBeavis( fit1 )
 
 # Compare before and after correction
 plot( fit1, h2=TRUE, col=8, pch=20) # display QTL h2
-plot( fit2, h2=TRUE, add=T, pch=20, type='o') # adjusted QTL h2
+plot( fit2, h2=TRUE, add=TRUE, pch=20, type='o') # adjusted QTL h2
 legend('topleft',pch=16,col=c(8,1),c('Before correction','After Beavis correction'))
 
 
