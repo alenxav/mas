@@ -2,6 +2,7 @@
 \alias{GWAS}
 \alias{gwas}
 \alias{MLM}
+\alias{MRR}
 \alias{CorrectBeavis}
 \alias{print.GenModel}
 \alias{plot.GenModel}
