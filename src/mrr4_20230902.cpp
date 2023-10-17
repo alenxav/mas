@@ -282,6 +282,7 @@ SEXP MRR(Eigen::MatrixXd Y,
         for(int j=0; j<k; j++){
           if(i>j){gs += GC(i,j);}}}
       gs = gs/((k*(k-1))/2);
+      for(int i=0; i<k; i++){for(int j=0; j<k; j++){ if(i!=j){ GC(i,j) =  gs*1.0;}}}
       // Extended Factor Analytics
     }else if(XFA){
       es.compute(GC);
