@@ -1,8 +1,8 @@
 Package: mas
 Type: Package
 Title: Marker Association Studies
-Version: 0.3
-Date: 2024-04-08
+Version: 0.3.1
+Date: 2024-04-28
 Authors@R: c(person("Alencar", "Xavier", role=c("aut", "cre"), email = "alenxav@gmail.com"),person("Shizhong", "Xu", role=c("aut", "ctb")))
 Author: Alencar Xavier [aut, cre], Shizhong Xu [aut, ctb]
 Maintainer: Alencar Xavier <alenxav@gmail.com>
