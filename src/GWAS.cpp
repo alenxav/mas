@@ -438,11 +438,15 @@ SEXP MLM(Eigen::MatrixXf Y, Eigen::MatrixXf X, Eigen::MatrixXf Z,
   for(int i=0; i<k; i++){for(int j=0; j<k; j++){GC(i,j)=vb(i,j)/(sqrt(vb(i,i)*vb(j,j)));}}
   
   // Name and create outputs
-  Rcpp::List OutputList = Rcpp::List::create(Rcpp::Named("b")=MU,Rcpp::Named("u")=b,
-                                             Rcpp::Named("hat")=hat,Rcpp::Named("h2")=h2,
-                                             Rcpp::Named("GC")=GC,Rcpp::Named("bend")=deflate,
-                                             Rcpp::Named("vb")=vb,Rcpp::Named("ve")=ve,
-                                             Rcpp::Named("cnv")=cnv,Rcpp::Named("its")=numit);
+  Rcpp::List OutputList = Rcpp::List::create(Rcpp::Named("b")=MU,
+                                             Rcpp::Named("u")=b,
+                                             Rcpp::Named("hat")=hat,
+                                             Rcpp::Named("h2")=h2,
+                                             Rcpp::Named("GC")=GC,
+                                             Rcpp::Named("vb")=vb,
+                                             Rcpp::Named("ve")=ve,
+                                             Rcpp::Named("cnv")=cnv,
+                                             Rcpp::Named("its")=numit);
   
   // Output
   OutputList.attr("class") = "PEGSmodel";
