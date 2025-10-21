@@ -351,9 +351,8 @@ SEXP MLM(Eigen::MatrixXf Y, Eigen::MatrixXf X, Eigen::MatrixXf Z,
   Eigen::VectorXf h2 = 1 - ve.array()/vy.array();
   Eigen::MatrixXf tilde = Z.transpose() * y;
   
-  // Bending
-  Eigen::MatrixXf A = vb*1.0;
-  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXf> EVDofA(A);
+  // Bending  
+  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXf> EVDofA(vb);
   float MinDVb, inflate = 0.0;
   
   // Prior for stability
@@ -407,17 +406,13 @@ SEXP MLM(Eigen::MatrixXf Y, Eigen::MatrixXf X, Eigen::MatrixXf Z,
       if(i==j){
         vb(i,i) = (TildeHat(i,i)+Sb(i,i))/(TrZSZ(i)+df0);            }else{
           vb(i,j) = (TildeHat(i,j)+TildeHat(j,i))/(TrZSZ(i)+TrZSZ(j)); }}}
-    
+            
     // Bending
-    A = vb*1.0;
-    EVDofA.compute(A);
-    MinDVb = EVDofA.eigenvalues().minCoeff();
-    if( MinDVb < 0.0 ){ 
-      Rcpp::Rcout << ".";
-      inflate = abs(MinDVb*1.001);
-      A.diagonal().array() += inflate;}
-    iG = A.inverse();
-    
+    EVDofA.compute(vb); MinDVb = EVDofA.eigenvalues().minCoeff();
+    if( MinDVb < 0.001 ){if(abs(MinDVb*1.1)>inflate) inflate = abs(MinDVb*1.1);}
+    vb.diagonal().array()+=inflate; 
+    iG = vb.completeOrthogonalDecomposition().pseudoInverse();
+        
     // Print status
     ++numit;
     cnv = log10((beta0.array()-b.array()).square().sum());
@@ -453,3 +448,4 @@ SEXP MLM(Eigen::MatrixXf Y, Eigen::MatrixXf X, Eigen::MatrixXf Z,
   return OutputList;
   
 }
+
