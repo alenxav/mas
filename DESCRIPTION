@@ -1,9 +1,9 @@
 Package: mas
 Type: Package
 Title: Marker Association Studies
-Version: 0.3.1
-Date: 2024-04-28
-Authors@R: c(person("Alencar", "Xavier", role=c("aut", "cre"), email = "alenxav@gmail.com"),person("Shizhong", "Xu", role=c("aut", "ctb")))
+Version: 0.3.2
+Date: 2025-11-03
+Authors@R: c(person("Alencar", "Xavier", role=c("aut", "cre"), email = "alenxav@gmail.com", comment = c(ORCID = "0000-0001-5034-9954")),person("Shizhong", "Xu", role=c("aut", "ctb")))
 Author: Alencar Xavier [aut, cre], Shizhong Xu [aut, ctb]
 Maintainer: Alencar Xavier <alenxav@gmail.com>
 Description: Genome-wide association analysis that accommodate membership information, variance adjustment, and correlated responses.

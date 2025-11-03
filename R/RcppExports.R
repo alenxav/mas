@@ -5,7 +5,7 @@ GWAS <- function(Y, GEN, M, NumPCs = 3L, maxit = 500L, logtol = -8, cores = 1L, 
     .Call('_mas_GWAS', PACKAGE = 'mas', Y, GEN, M, NumPCs, maxit, logtol, cores, verb)
 }
 
-MLM <- function(Y, X, Z, maxit = 500L, logtol = -8, cores = 1L) {
-    .Call('_mas_MLM', PACKAGE = 'mas', Y, X, Z, maxit, logtol, cores)
+MLM <- function(Y, X, Z_list, maxit = 500L, logtol = -8.0, cores = 1L, verbose = FALSE, df0 = 1.1, NonNegativeCorr = FALSE, InnerGS = FALSE, NoInv = FALSE, XFA = FALSE, NumXFA = 3L) {
+    .Call('_mas_MLM', PACKAGE = 'mas', Y, X, Z_list, maxit, logtol, cores, verbose, df0, NonNegativeCorr, InnerGS, NoInv, XFA, NumXFA)
 }
 

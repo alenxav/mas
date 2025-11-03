@@ -19,6 +19,8 @@ Wei, J. and Xu, S., 2016. A random-model approach to QTL mapping in multiparent 
 
 Xavier, A. and Habier, D., 2022. A new approach fits multivariate genomic prediction models efficiently. Genetics Selection Evolution, 54(1), pp.1-15.
 
+Xavier, A. et al. 2025. A new approach fits multivariate genomic prediction models efficiently. Genetics, Volume 229, Issue 4, April 2025, iyae179.
+
 }
 \examples{
 

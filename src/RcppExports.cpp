@@ -30,25 +30,32 @@ BEGIN_RCPP
 END_RCPP
 }
 // MLM
-SEXP MLM(Eigen::MatrixXf Y, Eigen::MatrixXf X, Eigen::MatrixXf Z, int maxit, float logtol, int cores);
-RcppExport SEXP _mas_MLM(SEXP YSEXP, SEXP XSEXP, SEXP ZSEXP, SEXP maxitSEXP, SEXP logtolSEXP, SEXP coresSEXP) {
+SEXP MLM(Eigen::MatrixXf Y, Eigen::MatrixXf X, Rcpp::List Z_list, int maxit, float logtol, int cores, bool verbose, float df0, bool NonNegativeCorr, bool InnerGS, bool NoInv, bool XFA, int NumXFA);
+RcppExport SEXP _mas_MLM(SEXP YSEXP, SEXP XSEXP, SEXP Z_listSEXP, SEXP maxitSEXP, SEXP logtolSEXP, SEXP coresSEXP, SEXP verboseSEXP, SEXP df0SEXP, SEXP NonNegativeCorrSEXP, SEXP InnerGSSEXP, SEXP NoInvSEXP, SEXP XFASEXP, SEXP NumXFASEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Eigen::MatrixXf >::type Y(YSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXf >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Eigen::MatrixXf >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type Z_list(Z_listSEXP);
     Rcpp::traits::input_parameter< int >::type maxit(maxitSEXP);
     Rcpp::traits::input_parameter< float >::type logtol(logtolSEXP);
     Rcpp::traits::input_parameter< int >::type cores(coresSEXP);
-    rcpp_result_gen = Rcpp::wrap(MLM(Y, X, Z, maxit, logtol, cores));
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< float >::type df0(df0SEXP);
+    Rcpp::traits::input_parameter< bool >::type NonNegativeCorr(NonNegativeCorrSEXP);
+    Rcpp::traits::input_parameter< bool >::type InnerGS(InnerGSSEXP);
+    Rcpp::traits::input_parameter< bool >::type NoInv(NoInvSEXP);
+    Rcpp::traits::input_parameter< bool >::type XFA(XFASEXP);
+    Rcpp::traits::input_parameter< int >::type NumXFA(NumXFASEXP);
+    rcpp_result_gen = Rcpp::wrap(MLM(Y, X, Z_list, maxit, logtol, cores, verbose, df0, NonNegativeCorr, InnerGS, NoInv, XFA, NumXFA));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mas_GWAS", (DL_FUNC) &_mas_GWAS, 8},
-    {"_mas_MLM", (DL_FUNC) &_mas_MLM, 6},
+    {"_mas_MLM", (DL_FUNC) &_mas_MLM, 13},
     {NULL, NULL, 0}
 };
 
