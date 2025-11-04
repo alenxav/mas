@@ -77,6 +77,7 @@ Xavier, A. and Habier, D., 2022. A new approach fits multivariate genomic predic
 
 # load the toy dataset
 data( soy ) 
+Z = Z[,seq(1,ncol(Z),4)]
 
 # run gwas
 fit1 = gwas(y, Z, pop) 

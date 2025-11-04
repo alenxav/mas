@@ -26,6 +26,7 @@ Xavier, A. et al. 2025. A new approach fits multivariate genomic prediction mode
 
 # load the toy dataset
 data( soy ) 
+Z = Z[,seq(1,ncol(Z),4)]
 
 # run gwas
 fit1 = gwas(y, Z, pop) 
