@@ -16,7 +16,7 @@ Genome-wide association analysis that allows for integrating population membersh
 }
 
 \usage{
-GWAS(Y,GEN,M,NumPCs=3,maxit=500,logtol=-8,cores=1,verb=TRUE)
+GWAS(Y,GEN,M,NumPCs=3,maxit=500,logtol=-8,cores=1,verb=FALSE)
 CorrectBeavis(fit,verb=TRUE)
 gwas(y,GEN,m,...)
 }
